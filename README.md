@@ -1,137 +1,80 @@
-# 🍽️ What's For Dinner? — Dynamic Recipe Discovery Platform
+# What's for dinner?
 
-> A lightweight, state-driven client-side web application designed to eliminate mealtime decision fatigue through dynamic DOM manipulation and responsive UI architecture. Built with pure Vanilla JavaScript (ES6+), Bootstrap 5, and modern modular CSS.
+A single-page recipe browser built with vanilla JavaScript and Bootstrap 5. It cycles through dinner ideas with prep times, ingredient checklists, cooking steps, and nutritional breakdowns.
 
----
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## 📌 Executive Summary
+## Overview
 
-Every day, millions of people experience decision paralysis over a simple question: *"What should I cook tonight?"* 
+The app serves as a quick recipe picker. Instead of scrolling through long food blogs, users can click through a collection of meals, check total prep and cook times, switch between ingredients and directions, and check nutritional macros per serving.
 
-**What's For Dinner** solves this by delivering an interactive, distraction-free discovery engine. With a single click, users can cycle through curated, chef-crafted recipes with complete nutritional intelligence, step-by-step preparation workflows, contextual cooking alerts, and pro culinary tips—all rendered in real-time with zero runtime framework dependencies.
+It runs entirely in the browser using plain JavaScript and static assets, with no framework dependencies or build tools.
 
----
+## How it works
 
-## ⚡ Core Technical Features
+- **Recipe cycling:** An internal index tracks the current recipe in an array of objects. Clicking the discovery button increments the counter and loops back to the start when reaching the end of the list, updating the DOM fields in place.
+- **Tabbed recipe details:** Bootstrap tabs organize meal information into four separate views:
+  - Ingredients: listed items with exact portions.
+  - Directions: step-by-step cooking instructions.
+  - Nutrition: calories, protein, carbs, fats, fiber, and sodium per serving.
+  - Chef tips: notes on heat control, browning, and common ingredient swaps.
+- **Cooking time flags:** An alert banner appears automatically if a recipe has `extendedTime: true` (meals taking over 45 minutes), helping users spot slow-cook dishes right away.
+- **Two-pane responsive layout:** On mobile screens, the page stacks into a single scrollable card. On wider screens, it expands into a split view with the dish photo on the left and an independently scrollable details panel on the right.
 
-- **Dynamic DOM Rendering Pipeline:** Decoupled data layer from presentation logic. The application ingests a structured JavaScript object schema and declaratively hydrates the DOM elements without full-page reloads.
-- **State-Driven Navigation (Circular Buffer):** Implements an index-based pointer state that cycles seamlessly across the recipe dataset with automatic bounds reset (`O(1)` state transition).
-- **Context-Aware Alert Engine:** Evaluates recipe metadata dynamically (e.g., `extendedTime: true` for meals requiring >45 mins) and conditionally injects warning banners to prevent unexpected prep delays.
-- **Micro-Tabbed Detail Dashboard:** Modular Bootstrap 5 tab system seamlessly switching between:
-  - **Ingredients List:** Quantified items with custom numbered badge styling.
-  - **Culinary Execution:** Chronological cooking steps with high-contrast sequence markers.
-  - **Nutritional Analytics:** 6-metric breakdown (Calories, Protein, Carbs, Fat, Fiber, Sodium).
-  - **Pro Chef Tips:** Curated conditional advice tailored to recipe edge-cases.
-- **Modern Design System & Token Architecture:** Built on CSS Custom Properties (`:root`), utilizing modern `oklch` color spaces for smooth gradients, clamp-based fluid typography, and consistent spacing units.
-- **Fully Responsive & Accessible:** Fluid grid switching effortlessly from a stacked mobile view to a dual-pane desktop card with independent scrollable panels.
+## Tech stack
 
----
+| Layer | Tool |
+| :--- | :--- |
+| Markup | Semantic HTML5 |
+| Styles | Bootstrap 5.3 and custom CSS variables |
+| Icons | FontAwesome 6 |
+| Scripting | Vanilla JavaScript (ES6+) |
 
-## 🛠️ Tech Stack & Architecture
+## Project files
 
-| Layer | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Core Logic** | Vanilla JavaScript (ES6+) | State tracking, dynamic DOM generation, conditional styling logic |
-| **Structure** | Semantic HTML5 | Accessible, SEO-friendly layout structure |
-| **Styling** | Modern CSS3 & Design Tokens | Custom properties, fluid typography, OKLCH gradient schemes |
-| **Grid & Components** | Bootstrap 5.3 | Responsive flexbox grid, navigation bar, and tabbed panes |
-| **Iconography** | FontAwesome 6 (Free) | Visual cues for metrics, timings, and interaction elements |
-
----
-
-## 📂 Project Structure
-
-```bash
+```text
 ├── css/
-│   ├── all.min.css           # FontAwesome icon library stylesheet
-│   ├── bootstrap.min.css     # Bootstrap 5 layout & utility framework
-│   └── style.css             # Custom design tokens, scroll containers & micro-animations
+│   ├── all.min.css           # FontAwesome
+│   ├── bootstrap.min.css     # Bootstrap 5
+│   └── style.css             # Custom styles, gradients, and scrollbars
 ├── js/
-│   ├── all.min.js            # FontAwesome SVG/JS engine
-│   ├── bootstrap.bundle.min.js # Bootstrap component interactions (Tabs, Navbar)
-│   └── main.js               # Recipe data model, state logic & DOM hydration
-├── img/                      # Optimized recipe photography & assets
-│   ├── 1.png - 6.png         # Recipe hero visuals
-│   └── avatar-1.jpg          # User interface profile placeholder
-├── index.html                # Semantic entry point and UI skeleton
-└── README.md                 # Project technical documentation
+│   ├── all.min.js             # FontAwesome runtime
+│   ├── bootstrap.bundle.min.js# Bootstrap tab components
+│   └── main.js               # Recipe dataset and DOM update logic
+├── img/                      # Recipe dish photography
+├── index.html                # Base layout and tab markup
+└── README.md
 ```
 
----
+## Recipe object structure
 
-## 📊 Data Schema Definition
-
-Each recipe entity adheres to the following structured JavaScript object model:
+All recipes are stored inside a data array in `main.js`:
 
 ```javascript
 {
-  name: String,            // Title of the dish
-  description: String,     // Brief culinary overview
-  image: String,           // Relative asset path
-  rating: String,          // Community score (e.g., "4.8")
-  reviews: String,         // Formatted review count (e.g., "(445 reviews)")
-  prepTime: String,        // Preparation duration (e.g., "20 min")
-  cookTime: String,        // Active cooking duration (e.g., "15 min")
-  servings: String,        // Yield count (e.g., "2 people")
-  difficulty: String,      // "Easy" | "Intermediate" | "Hard" (drives dynamic badge color)
-  category: String,        // Regional cuisine (Asian, Mediterranean, Egyptian, etc.)
-  extendedTime: Boolean,   // Flag triggering the duration warning banner
-  ingredients: Array<String>, // List of ingredients with quantities
-  instructions: Array<String>,// Step-by-step cooking procedure
-  nutrition: {             // Nutritional breakdown per serving
-    calories: String,
-    protein: String,
-    carbs: String,
-    fat: String,
-    fiber: String,
-    sodium: String
+  name: "Creamy Tuscan Garlic Chicken",
+  description: "Pan-seared chicken breasts simmered in a garlic, spinach, and sun-dried tomato cream sauce.",
+  image: "img/1.png",
+  rating: "4.8",
+  reviews: "(445 reviews)",
+  prepTime: "20 min",
+  cookTime: "15 min",
+  servings: "2 people",
+  difficulty: "Easy",
+  category: "Italian",
+  extendedTime: false,
+  ingredients: ["2 boneless chicken breasts", "1 cup heavy cream", "..."],
+  instructions: ["Season chicken breasts with salt and pepper...", "..."],
+  nutrition: {
+    calories: "520",
+    protein: "42g",
+    carbs: "12g",
+    fat: "34g",
+    fiber: "3g",
+    sodium: "620mg"
   },
-  tips: Array<String>      // Edge-case culinary recommendations
+  tips: ["Pat chicken dry with paper towels before searing to get a better crust."]
 }
 ```
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-No build steps, package managers, or server installations required. This project runs directly in any modern web browser.
-
-### Quick Run
-1. Clone or download the repository:
-   ```bash
-   git clone https://github.com/your-username/whats-for-dinner.git
-   ```
-2. Navigate into the project directory:
-   ```bash
-   cd whats-for-dinner
-   ```
-3. Open `index.html` in your browser:
-   - On Windows:
-     ```powershell
-     Start-Process index.html
-     ```
-   - Or run with a lightweight local server (e.g., VS Code Live Server / `npx serve`).
-
----
-
-## 🔮 Scalability & Future Roadmap
-
-- [ ] **State Persistence:** Cache bookmarked/favorite recipes into browser `localStorage`.
-- [ ] **External API Integration:** Connect to Spoonacular / TheMealDB API for infinite recipe streaming.
-- [ ] **Dietary & Allergen Filtering:** Implement multi-filter criteria (Keto, Vegan, High-Protein, Under 30 Mins).
-- [ ] **Interactive Portion Scaler:** Dynamically recalculate ingredient quantities based on user-selected serving sizes.
-
----
-
-## 👨‍💻 Author
-
-**Abdarrahman Gamal**  
-Frontend Developer & Web Engineering Enthusiast  
-- **LinkedIn:** [Abdarrahman Gamal](https://linkedin.com)  
-- **GitHub:** [@your-github](https://github.com)
-
----
-
-## 📄 License
-This project is open-source and available under the [MIT License](LICENSE).
